@@ -32,6 +32,7 @@ from threading import Thread, active_count
 from time import sleep
 from sys import path
 path.append("src")
+import useragents
 import connection
 import threading
 import argparse
@@ -56,8 +57,8 @@ parser.add_argument("--ignore",\
         help = "Look for specific string in HTML. If found, discart page")
 parser.add_argument("--timeout", type = float, default = 10,\
         help = "Set timeout")
-parser.add_argument("--random-agent", action = "store_true",
-        help = "Set random user agent"
+parser.add_argument("--random-agent", action = "store_true", dest ="RandomAgent",
+        help = "Set random user agent")
 parser.add_argument("--timeset", type = float, default = None,\
         help = "Set time between requests")
 
@@ -65,6 +66,10 @@ args = parser.parse_args()
 
 #Check All Requirements (URL, Server Status, Redirect)
 def check():
+
+    if args.RandomAgent == True:
+        args.UserAgent = useragents.generate()
+
     #Call Module
     conn = connection.verify(args.u, args.v, args.UserAgent,\
             args.timeout)
@@ -173,6 +178,9 @@ def test(target_info, wlist):
                     if target[-1] == "/":
                         final_target = target[:-1] + directory
 
+
+            if args.RandomAgent == True:
+                args.UserAgent = useragents.generate()
 
             #Import connection module so the paths can be tested
             conn = connection.verify(final_target, args.v, args.UserAgent,\
