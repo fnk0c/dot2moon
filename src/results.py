@@ -63,7 +63,7 @@ class show(object):
             print("Default Size: %s bytes" % self.default_size)
             print("Size: %s bytes" % self.infos[l][1])
             try:
-                print("HTML:\n%s" % self.infos[l][5])
+                print("HTML:\n%s" % self.infos[l][5][:300])
             except IndexError:
                 pass
             print("-"*80)
@@ -87,7 +87,7 @@ class show(object):
                 print("Default Size: %s bytes" % self.default_size)
                 print("Size: %s bytes" % self.infos[l][1])
                 try:
-                    print("HTML:\n%s" % self.infos[l][4])
+                    print("HTML:\n%s" % self.infos[l][4][:300])
                 except IndexError:
                     pass
                 print("-"*80)
