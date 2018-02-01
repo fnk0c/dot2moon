@@ -29,50 +29,75 @@ SOFTWARE.
 """
 
 from threading import Thread, active_count
+from sys import path, argv
+from colorama import Fore
 from time import sleep
-from sys import path
 path.append("src")
 import useragents
 import connection
 import threading
 import argparse
 import results
+import banner
 import tester
 
-parser = argparse.ArgumentParser(description = \
-        "Path Traversal tester and validator", add_help = True)
-parser.add_argument("-u", required = True,\
+parser = argparse.ArgumentParser(
+        description = "Path Traversal tester and validator",
+        add_help = True)
+parser.add_argument(
+        "-u", 
+        required = True,
         help = "Target site")
-parser.add_argument("-w", required = True,\
+parser.add_argument(
+        "-w",
+        required = True,
         help = "Wordlist used to test")
-parser.add_argument("-v", action = "store_true",\
+parser.add_argument(
+        "-v", 
+        action = "store_true",
         help = "Verbose, details every step")
-parser.add_argument("-t", type = int, default = 4,\
+parser.add_argument(
+        "-t",
+        type = int,
+        default = 4,
         help = "Number of threads that will be executed (default = 4)")
-parser.add_argument("-o", 
+parser.add_argument(
+        "-o", 
         help = "Save results to file")
-parser.add_argument("--user-agent", dest = "UserAgent",\
+parser.add_argument(
+        "--user-agent", 
+        dest = "UserAgent",
         help = "Change requests User-Agent")
-parser.add_argument("--ignore",\
+parser.add_argument(
+        "--ignore",
         help = "Look for specific string in HTML. If found, discart page")
-parser.add_argument("--timeout", type = float, default = 10,\
+parser.add_argument(
+        "--timeout",
+        type = float,
+        default = 10,
         help = "Set timeout")
-parser.add_argument("--random-agent", action = "store_true", dest ="RandomAgent",
+parser.add_argument(
+        "--random-agent",
+        action = "store_true",
+        dest ="RandomAgent",
         help = "Set random user agent")
-parser.add_argument("--timeset", type = float, default = None,\
+parser.add_argument(
+        "--timeset",
+        type = float,
+        default = None,
         help = "Set time between requests")
 
 args = parser.parse_args()
 
-#Check All Requirements (URL, Server Status, Redirect)
 def check():
-
+    """
+	Check All Requirements (URL, Server Status, Redirect
+    """
     if args.RandomAgent == True:
         args.UserAgent = useragents.generate()
 
-    #Call Module
-    conn = connection.verify(args.u, args.v, args.UserAgent,\
-            args.timeout)
+    conn = connection.verify(
+    	args.u, args.v, args.UserAgent, args.timeout)
 
     #Validates input URL
     par = conn.url()
@@ -80,7 +105,6 @@ def check():
     #Returns url and HTTP code
     code = conn.HTTPcode(True)
 
-    #Verify server status using HTTP response code
     if code[1] == 200:
         print(" [+] Server Status: Online")
         print(" [+] Response code: ", code[1])
@@ -108,14 +132,18 @@ def check():
     #Returns URL, (URL, default page size), default_html, parameter status
     return(target_url, default_p_size, default_html, par)
 
-#Opens Wordlist File and read it
 def wordlist():
+    """
+        Opens Wordlist File and read it
+    """
     with open(args.w, "r") as wl:
         wl = wl.readlines()
     return(wl)
 
-#Path test function
 def test(target_info, wlist):
+    """
+        Path test function
+    """
     #target_info is a tuple and has
     # [0] = URL
     # [1] = default page size
@@ -128,13 +156,10 @@ def test(target_info, wlist):
 
     #Will go through all the lines in the wordlist
     for directory in wlist:
-        #Remove /n /r and others
         directory = directory.rstrip()
-        #Check if directory has already been scanned
+
         if directory not in scanned:
-            #Add directory to scanned list. So it will not be scanned again
             scanned.append(directory)
-    
             #If --timeset in use. The program will wait before next 
             #request        
             if args.timeset != None:
@@ -182,7 +207,6 @@ def test(target_info, wlist):
             if args.RandomAgent == True:
                 args.UserAgent = useragents.generate()
 
-            #Import connection module so the paths can be tested
             conn = connection.verify(final_target, args.v, args.UserAgent,\
                     args.timeout)
             #Checks for HTTP code of URL + payload. False to "check"
@@ -200,8 +224,8 @@ def test(target_info, wlist):
                 infos[p_size[0]].append(p_size[1])
                 
                 #Returns (URL, serverURL, Redirect status)
-                #False both to "check" and "parameter" Parameter will only be
-                #relevant if checking.
+                #False both to "check" and "parameter" Parameter will only 
+                #be relevant if checking.
                 verify_red = conn.redirect(False, False)
                 #Add redirect results to redirect list
                 infos[verify_red[0]].append(verify_red[1]) #server URL
@@ -231,7 +255,6 @@ def test(target_info, wlist):
                         
                             #Compares pages byte size
                             if p_size != p_size_default:
-                                #If passed it will be added to final report as
                                 #Potential result
                                 infos[final_target].append(html)
 
@@ -246,8 +269,6 @@ if __name__ == "__main__":
     scanned = []
     global infos
     infos = {}
-
-    import banner
 
     #Inform that the program is starting
     print(" [+] The program has been initiated")
@@ -291,11 +312,12 @@ if __name__ == "__main__":
         if active_count() == 1:
             loop = False
 
-            #Just to divide the screen  
-            print("\n----RESULTS" + ("-"*25) + "RESULTS" +\
-                ("-"*26) + "RESULTS----")
-            print("-"*20 +"RESULTS" + ("-"*26) + "RESULTS" +\
-                ("-"*20)) 
+            #Just to divide the screen
+            print(Fore.GREEN)
+            print("-"*80)
+            print("-"*20+"RESULTS"+("-"*53))
+            print("-"*80)
+            print(Fore.RESET)
 
             #Check if infos contains any information
             if len(infos) != 0:
