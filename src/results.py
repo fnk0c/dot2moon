@@ -1,6 +1,8 @@
 #!/usb/bin/python
 #coding: utf-8
 
+from colorama import Fore
+
 __AUTHOR__ = "Fnkoc"
 __LICENSE__= "MIT"
 
@@ -63,16 +65,20 @@ class show(object):
             print("Default Size: %s bytes" % self.default_size)
             print("Size: %s bytes" % self.infos[l][1])
             try:
-                print("HTML:\n%s" % self.infos[l][5])
+                print("HTML:\n%s" % self.infos[l][5][:300])
             except IndexError:
                 pass
+            print(Fore.YELLOW)
             print("-"*80)
+            print(Fore.RESET)
 
     #Funtion that will only show the potential results
     def potential(self, average):
-        print("-" * 80)
+        print(Fore.GREEN)
+        print("-"*80)
         print("----POTENTIAL-RESULTS" + ("-" * 59))
-        print("-" * 80)
+        print("-"*80)
+        print(Fore.RESET)
         for l in self.infos:
             if len(self.infos[l]) == 5:
                 print("URL: %s" % l)
@@ -87,10 +93,14 @@ class show(object):
                 print("Default Size: %s bytes" % self.default_size)
                 print("Size: %s bytes" % self.infos[l][1])
                 try:
-                    print("HTML:\n%s" % self.infos[l][4])
+                    print(Fore.CYAN)
+                    print("HTML:\n%s" % self.infos[l][4][:300])
+                    print(Fore.RESET)
                 except IndexError:
                     pass
+                print(Fore.YELLOW)
                 print("-"*80)
+                print(Fore.RESET)
 
     def output(self, file_name, average):
         with open(file_name, "w") as f:
