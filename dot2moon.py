@@ -72,6 +72,11 @@ parser.add_argument(
         "--ignore",
         help = "Look for specific string in HTML. If found, discart page")
 parser.add_argument(
+        "--characters",
+        type = int,
+        default = 300,
+        help = "Define how many characters of HTML will be shown")
+parser.add_argument(
         "--timeout",
         type = float,
         default = 10,
@@ -327,9 +332,9 @@ if __name__ == "__main__":
                 #Retrive Average Page Size
                 avg = rst.AverageSize()
                 #Print All Results Information
-                rst.detail(avg)
+                rst.detail(avg, args.characters)
                 #Print only Potential results
-                rst.potential(avg)
+                rst.potential(avg, args.characters)
                 if args.o != None:
                     rst.output(args.o, avg)
             else:

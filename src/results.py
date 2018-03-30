@@ -50,7 +50,7 @@ class show(object):
         return(avg)
 
     #Show details of all pages scanned/found (only code 200)
-    def detail(self, average):
+    def detail(self, average, characters):
         #Print infos to terminal
         for l in self.infos:
             print("URL: %s" % l)
@@ -65,7 +65,7 @@ class show(object):
             print("Default Size: %s bytes" % self.default_size)
             print("Size: %s bytes" % self.infos[l][1])
             try:
-                print("HTML:\n%s" % self.infos[l][5][:300])
+                print("HTML:\n%s" % self.infos[l][5][:characters])
             except IndexError:
                 pass
             print(Fore.YELLOW)
@@ -73,7 +73,7 @@ class show(object):
             print(Fore.RESET)
 
     #Funtion that will only show the potential results
-    def potential(self, average):
+    def potential(self, average, characters):
         print(Fore.GREEN)
         print("-"*80)
         print("----POTENTIAL-RESULTS" + ("-" * 59))
@@ -94,7 +94,7 @@ class show(object):
                 print("Size: %s bytes" % self.infos[l][1])
                 try:
                     print(Fore.CYAN)
-                    print("HTML:\n%s" % self.infos[l][4][:300])
+                    print("HTML:\n%s" % self.infos[l][4][:characters])
                     print(Fore.RESET)
                 except IndexError:
                     pass
