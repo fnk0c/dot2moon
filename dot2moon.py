@@ -65,6 +65,11 @@ parser.add_argument(
         "-o", 
         help = "Save results to file")
 parser.add_argument(
+        "-c",
+        type = int,
+        default = 300,
+        help = "Define how many characters of HTML will be shown")
+parser.add_argument(
         "--user-agent", 
         dest = "UserAgent",
         help = "Change requests User-Agent")
@@ -327,9 +332,9 @@ if __name__ == "__main__":
                 #Retrive Average Page Size
                 avg = rst.AverageSize()
                 #Print All Results Information
-                rst.detail(avg)
+                rst.detail(avg, args.c)
                 #Print only Potential results
-                rst.potential(avg)
+                rst.potential(avg, args.c)
                 if args.o != None:
                     rst.output(args.o, avg)
             else:

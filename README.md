@@ -39,9 +39,9 @@ Download and install [Python 3.x](https://www.python.org/downloads/windows/) and
 ## Running
 `python dot2moon.py --help`  
 ```
-usage: dot2moon.py [-h] -u U -w W [-v] [-t T] [-o O] [--user-agent USERAGENT]
-                   [--ignore IGNORE] [--timeout TIMEOUT] [--random-agent]
-                   [--timeset TIMESET]
+usage: dot2moon.py [-h] -u U -w W [-v] [-t T] [-o O] [-c C]
+                   [--user-agent USERAGENT] [--ignore IGNORE]
+                   [--timeout TIMEOUT] [--random-agent] [--timeset TIMESET]
 
 Path Traversal tester and validator
 
@@ -52,6 +52,7 @@ optional arguments:
   -v                    Verbose, details every step
   -t T                  Number of threads that will be executed (default = 4)
   -o O                  Save results to file
+  -c C                  Define how many characters of HTML will be shown
   --user-agent USERAGENT
                         Change requests User-Agent
   --ignore IGNORE       Look for specific string in HTML. If found, discart
@@ -67,7 +68,7 @@ optional arguments:
 * Changing number of threads, enabling verbose and outputing to file  
 `python dot2moon.py -u website.com/catalog.php?src= -w wordlists/wl.txt -t 7 -v -o output.txt`  
 
-* Avoid being blocked by changin User Agent and setting a wait time between requests  
+* Avoid being blocked by changing User Agent and setting a wait time between requests  
 `python dot2moon.py -u website.com/catalog.php?src= -w wordlists/wl.txt --random-agent --timeset 5`  
 ***Note: This option does not support multi-threading***  
 
