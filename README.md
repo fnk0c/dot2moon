@@ -39,8 +39,8 @@ Download and install [Python 3.x](https://www.python.org/downloads/windows/) and
 ## Running
 `python dot2moon.py --help`  
 ```
-usage: dot2moon.py [-h] -u U -w W [-v] [-t T] [-o O] [--user-agent USERAGENT]
-                   [--ignore IGNORE] [--characters CHARACTERS]
+usage: dot2moon.py [-h] -u U -w W [-v] [-t T] [-o O] [-c C]
+                   [--user-agent USERAGENT] [--ignore IGNORE]
                    [--timeout TIMEOUT] [--random-agent] [--timeset TIMESET]
 
 Path Traversal tester and validator
@@ -52,12 +52,11 @@ optional arguments:
   -v                    Verbose, details every step
   -t T                  Number of threads that will be executed (default = 4)
   -o O                  Save results to file
+  -c C                  Define how many characters of HTML will be shown
   --user-agent USERAGENT
                         Change requests User-Agent
   --ignore IGNORE       Look for specific string in HTML. If found, discart
                         page
-  --characters CHARACTERS
-                        Define how many characters of HTML will be shown
   --timeout TIMEOUT     Set timeout
   --random-agent        Set random user agent
   --timeset TIMESET     Set time between requests
