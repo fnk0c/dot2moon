@@ -131,6 +131,7 @@ def check():
     
     #Get default page HTML
     default_html = conn.HTML(True)
+    default_html = sub("<.*?>","",default_html)
     
     #Check for redirect (True)
     target_url = conn.redirect(True, True)
@@ -337,7 +338,7 @@ if __name__ == "__main__":
                 #Print All Results Information
                 rst.detail(avg, args.c)
                 #Print only Potential results
-                rst.potential(avg, args.c)
+                rst.potential(avg, args.c, target[2])
                 if args.o != None:
                     rst.output(args.o, avg)
             else:
