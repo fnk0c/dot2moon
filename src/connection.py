@@ -49,12 +49,6 @@ class verify(object):
             if self.verbose == True:
                 print(" [!] New URL: %s" % self.target_url)
         
-        #Checks if URL has parameters
-        if "=" in self.target_url:
-            return(True)
-        else:
-            return(False)
-
     #Check if server is trying to redirect us
     def redirect(self, check, parameter):
         #See if server tries to redirect in main page

