@@ -66,14 +66,15 @@ class verify(object):
                 pass
             #If different User Agent is required
             if self.UserAgent != None:
-                server_url = urlopen(Request(_url,\
-                        headers = {"User-Agent":self.UserAgent}),\
-                        timeout = self.TimeOut).geturl()
+                server_url = urlopen(Request(
+                        _url,
+                        headers={"User-Agent":self.UserAgent}),
+                        timeout=self.TimeOut).geturl()
 
             #If not, the default will be used
             else:
-                server_url = urlopen(_url, \
-                        timeout = self.TimeOut).geturl()
+                server_url = urlopen(
+                        _url, timeout=self.TimeOut).geturl()
 
             #If redirect happens
             if server_url != _url:
@@ -84,7 +85,7 @@ class verify(object):
                 if follow == "y":
                     _url = _url.split("/")
                     n = server_url.split("/")
-                    self.target_url = self.target_url.replace(\
+                    self.target_url = self.target_url.replace(
                             _url[0], n[0]).replace(_url[2], n[2])
                     print(" [!] New target acquired: %s" % self.target_url)
                 else:
@@ -100,14 +101,16 @@ class verify(object):
         else:
             if self.UserAgent != None:
                 #If different User Agent is required
-                server_url = urlopen(Request(self.target_url,\
-                        headers = {"User-Agent":self.UserAgent}),\
-                        timeout = self.TimeOut).geturl()
+                server_url = urlopen(Request(
+                        self.target_url,
+                        headers={"User-Agent":self.UserAgent}),
+                        timeout=self.TimeOut).geturl()
 
                 #If not, the default will be used
             else:
-                server_url = urlopen(self.target_url,\
-                        timeout = self.TimeOut).geturl()
+                server_url = urlopen(
+                        self.target_url,
+                        timeout=self.TimeOut).geturl()
 
             if server_url != self.target_url:
                 check_redirect = "redirect"
@@ -129,28 +132,32 @@ class verify(object):
             if check == True:
                 #If we need to change the UserAgent
                 if self.UserAgent != None:
-                    request_code = urlopen(Request(_url,\
-                            headers = {"User-Agent":self.UserAgent}),\
-                            timeout = self.TimeOut).getcode()
+                    request_code = urlopen(Request(
+                            _url,
+                            headers={"User-Agent":self.UserAgent}),
+                            timeout=self.TimeOut).getcode()
 
                 #If not, default will be used
                 else:
-                    request_code = urlopen(_url,\
-                            timeout = self.TimeOut).getcode()
+                    request_code = urlopen(
+                            _url,
+                            timeout=self.TimeOut).getcode()
         
                 return(self.target_url, request_code)
 
             else:
                 #If different User Agent is required
                 if self.UserAgent != None:
-                    request_code = urlopen(Request(self.target_url,\
-                            headers = {"User-Agent":self.UserAgent}),\
-                            timeout = self.TimeOut).getcode()
+                    request_code = urlopen(Request(
+                            self.target_url,
+                            headers={"User-Agent":self.UserAgent}),
+                            timeout=self.TimeOut).getcode()
 
                 #If not, default will be used
                 else:
-                    request_code = urlopen(self.target_url,\
-                            timeout = self.TimeOut).getcode()
+                    request_code = urlopen(
+                            self.target_url,
+                            timeout=self.TimeOut).getcode()
        
                 if self.verbose == True:
                     print(self.target_url, request_code)
@@ -188,14 +195,16 @@ class verify(object):
         if check == True:
             try:
                 if self.UserAgent != None:
-                    page_size = len(urlopen(Request(self.target_url + "a",\
-                            headers = {"User-Agent":self.UserAgent}),
-                            timeout = self.TimeOut).read())
+                    page_size = len(urlopen(Request(
+                            self.target_url + "a",
+                            headers={"User-Agent":self.UserAgent}),
+                            timeout=self.TimeOut).read())
 
                 #If not, default will be used
                 else:
-                    page_size = len(urlopen(self.target_url + "a",\
-                            timeout = self.TimeOut).read())
+                    page_size = len(urlopen(
+                            self.target_url + "a",
+                            timeout=self.TimeOut).read())
 
             except HTTPError as e:
                 print(e)
@@ -206,14 +215,16 @@ class verify(object):
 
         else:
             if self.UserAgent != None:
-                page_size = len(urlopen(Request(self.target_url,\
-                        headers = {"User-Agent":self.UserAgent}),\
-                        timeout = self.TimeOut).read())
+                page_size = len(urlopen(Request(
+                        self.target_url,
+                        headers={"User-Agent":self.UserAgent}),
+                        timeout=self.TimeOut).read())
 
             #If not, default will be used
             else:
-                page_size = len(urlopen(self.target_url,\
-                        timeout = self.TimeOut).read())
+                page_size = len(urlopen(
+                        self.target_url,
+                        timeout=self.TimeOut).read())
 
             if self.verbose == True:
                 print(self.target_url, page_size)
@@ -223,14 +234,16 @@ class verify(object):
     def HTML(self, check):
         try:
             if self.UserAgent != None:
-                page_html = urlopen(Request(self.target_url,\
-                        headers = {"User-Agent":self.UserAgent}),\
-                        timeout = self.TimeOut).read().decode("utf-8")
+                page_html = urlopen(Request(
+                        self.target_url,
+                        headers={"User-Agent":self.UserAgent}),
+                        timeout=self.TimeOut).read().decode("utf-8")
 
             #If not, the default will be used
             else:
-                page_html = urlopen(self.target_url,\
-                        timeout = self.TimeOut).read().decode("utf-8")
+                page_html = urlopen(
+                        self.target_url,
+                        timeout=self.TimeOut).read().decode("utf-8")
 
         except HTTPError:
             page_html = "Can't get page source code"

@@ -158,7 +158,6 @@ def test(target_info, wlist):
     # [0] = URL
     # [1] = default page size
     # [2] = default HTML page
-    # [3] = parameter status (False or True)
     target = target_info[0]
     p_size_default = target_info[1]
     p_html_default = target_info[2]
@@ -199,8 +198,8 @@ def test(target_info, wlist):
             if args.RandomAgent == True:
                 args.UserAgent = useragents.generate()
 
-            conn = connection.verify(final_target, args.v, args.UserAgent,\
-                    args.timeout)
+            conn = connection.verify(
+                    final_target, args.v, args.UserAgent, args.timeout)
             #Checks for HTTP code of URL + payload. False to "check"
             #Response_code returns (URL tested, HTTP code)
             response_code = conn.HTTPcode(False)
@@ -279,7 +278,7 @@ if __name__ == "__main__":
     print(" [+] Timeout set of %.2f seconds" % args.timeout)
     
     #Calls Check function in order to check requirements
-    #Target now returns URL, default page size, default html, parameter status
+    #Target now returns URL, default page size, default html
     target = check()
     
     #Calls function to retrieve wordlist
