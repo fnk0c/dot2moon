@@ -32,6 +32,7 @@ from threading import Thread, active_count
 from sys import path, argv
 from colorama import Fore
 from time import sleep
+from re import sub
 path.append("src")
 import useragents
 import connection
@@ -130,6 +131,7 @@ def check():
     
     #Get default page HTML
     default_html = conn.HTML(True)
+    default_html = sub("<.*?>","",default_html)
     
     #Check for redirect (True)
     target_url = conn.redirect(True, True)
@@ -239,6 +241,8 @@ def test(target_info, wlist):
                 #Downloads page source code
                 #Returns page HTML. False to "check"
                 html = conn.HTML(False)
+
+                html = sub("<.*?>","",html)
                 
                 #Calls module tha test source code content
                 test_html = tester.crawler(html, args.v)
@@ -252,7 +256,7 @@ def test(target_info, wlist):
                     test_payload = test_html.payload(final_target)
                     if test_payload[2] == "not_found":
                         #If passes on second test. Go further
-
+                    
                         #Test HTML if contain specific strings
                         test_string = test_html.strings(args.ignore)
                         if test_string == "not_found":
@@ -334,7 +338,7 @@ if __name__ == "__main__":
                 #Print All Results Information
                 rst.detail(avg, args.c)
                 #Print only Potential results
-                rst.potential(avg, args.c)
+                rst.potential(avg, args.c, target[2])
                 if args.o != None:
                     rst.output(args.o, avg)
             else:

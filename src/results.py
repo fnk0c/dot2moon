@@ -2,6 +2,7 @@
 #coding: utf-8
 
 from colorama import Fore
+from difflib import unified_diff
 
 __AUTHOR__ = "Fnkoc"
 __LICENSE__= "MIT"
@@ -73,7 +74,9 @@ class show(object):
             print(Fore.RESET)
 
     #Funtion that will only show the potential results
-    def potential(self, average, characters):
+    def potential(self, average, characters, default_html):
+        default_html = default_html.splitlines()
+
         print(Fore.GREEN)
         print("-"*80)
         print("----POTENTIAL-RESULTS" + ("-" * 59))
@@ -94,7 +97,16 @@ class show(object):
                 print("Size: %s bytes" % self.infos[l][1])
                 try:
                     print(Fore.CYAN)
-                    print("HTML:\n%s" % self.infos[l][4][:characters])
+                    target_html = self.infos[l][4].splitlines()
+                    diff = unified_diff(
+                            default_html, target_html, lineterm="\n")
+
+                    for content in diff:
+                        if content[0] == "+":
+                            print(content[1:])
+
+                    #print("HTML:\n%s" % self.infos[l][4][:characters])
+                    
                     print(Fore.RESET)
                 except IndexError:
                     pass
