@@ -39,7 +39,7 @@ Download and install [Python 3.x](https://www.python.org/downloads/windows/) and
 ## Running
 `python dot2moon.py --help`  
 ```
-usage: dot2moon.py [-h] -u U -w W [-v] [-t T] [-o O] [-c C]
+usage: dot2moon.py [-h] -u U -w W [-v] [-t T] [-p P] [-o O] [-c C]
                    [--user-agent USERAGENT] [--ignore IGNORE]
                    [--timeout TIMEOUT] [--random-agent] [--timeset TIMESET]
 
@@ -51,6 +51,7 @@ optional arguments:
   -w W                  Wordlist used to test
   -v                    Verbose, details every step
   -t T                  Number of threads that will be executed (default = 4)
+  -p P                  POST explotation. Inform parameter
   -o O                  Save results to file
   -c C                  Define how many characters of HTML will be shown
   --user-agent USERAGENT
@@ -79,7 +80,11 @@ optional arguments:
 `python dot2moon.py -u website.com/catalog.php?src= -w wordlists/wl.txt --ignore Warning`  
 
 * Specify User Agent  
-`python dot2moon.py -u website.com/catalog.php?src= -w wordlists/wl.txt --user-agent 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36'`  
+`python dot2moon.py -u website.com/catalog.php?src= -w wordlists/wl.txt --user-agent 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36'
+
+* Post Injection
+`python dot2moon.py -u website.com/catalog/?page=text-file-viewer.php -p 'textfile=PAYLOAD&text-file-viewer-php-submit-button=ViewFile'  -w wordlists/wl.txt`
+***Note: Injection point must be replaced with "PAYLOAD"***
 
 ## License
 check [License](https://github.com/PsiqueLabs/dot2moon/blob/master/LICENSE) for more details.  
