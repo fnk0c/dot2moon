@@ -29,6 +29,7 @@ SOFTWARE.
 """
 
 from urllib.request import urlopen, Request
+from urllib import parse
 from urllib.error import HTTPError, URLError
 
 import http
@@ -48,6 +49,16 @@ class verify(object):
         
             if self.verbose == True:
                 print(" [!] New URL: %s" % self.target_url)
+
+    def parameter(self, par):
+        par_dic = {}
+        par = par.split("&")
+        for p in par:
+            ps = p.split("=")
+            par_dic[ps[0]] = ps[1]
+
+        return(par_dic)
+            
         
     #Check if server is trying to redirect us
     def redirect(self, check, parameter):
@@ -255,3 +266,29 @@ class verify(object):
             print("----END" + "-"*73)
 
         return(page_html)
+
+    def post(self, payload, request_par):
+        data = parse.urlencode(request_par).encode()
+
+        if self.UserAgent != None:
+            req = Request(
+                    self.target_url,
+                    data=data, 
+                    headers={"User-Agent":self.UserAgent})
+            conn = urlopen(req, timeout=self.TimeOut)
+        else:
+            conn = urlopen(self.target_url,
+                    data=data,
+                    timeout=self.TimeOut)
+
+        html = conn.read().decode("utf-8")
+        page_size = len(html)
+
+        if self.verbose == True:
+            print(" [+] Source code got from %s" % payload)
+            print("----START" + "-"*71)
+            print(html)
+            print("----END" + "-"*73)
+        
+        return(self.target_url, page_size, html, payload)
+

@@ -125,7 +125,7 @@ def check():
         if follow == "n":
             exit()
         else:
-            #returns URL, default page size, default html, parameter status
+            #returns URL, default page size, default html
             return(args.u, 0, "not found")
    
     #Get default failed injection page size
@@ -139,8 +139,12 @@ def check():
     #Check for redirect (True)
     target_url = conn.redirect(True, True)
 
-    #Returns URL, (URL, default page size), default_html, parameter status
-    return(target_url, default_p_size, default_html)
+    #Returns URL, (URL, default page size), default_html
+    if args.p != None:
+        par = conn.parameter(args.p)
+        return(target_url, default_p_size, default_html, par)
+    else:
+        return(target_url, default_p_size, default_html)
 
 def wordlist():
     """
@@ -150,9 +154,61 @@ def wordlist():
         wl = wl.readlines()
     return(wl)
 
-def test(target_info, wlist):
+def test_POST(target_info, wlist):
     """
-        Path test function
+        [POST] Path test function
+    """
+    #target_info is a tuple and has
+    # [0] = URL
+    # [1] = default page size
+    # [2] = default HTML page
+    # [3] = injection parameter
+    target = target_info[0]
+    p_size_default = target_info[1]
+    p_html_default = target_info[2]
+    parameter = target_info[3]
+
+    #Will go through all the lines in the wordlist
+    for directory in wlist:
+        directory = directory.rstrip()
+        
+        if directory not in scanned:
+            scanned.append(directory)
+            #If --timeset in use. The program will wait before next request
+            if args.timeset != None:
+                if args.v == True:
+                    print("sleeping %s seconds" % args.timeset)
+                sleep(args.timeset)
+            
+            for p in parameter:
+                #First run has "PAYLOAD" as value
+                if parameter[p] == "PAYLOAD":
+                    parameter[p] = directory
+                #After the first, it adquires the injection payload value
+                elif "/" in parameter[p]:
+                    parameter[p] = directory
+
+            conn = connection.verify(
+                    target, args.v, args.UserAgent, args.timeout)
+            post_response = conn.post(directory, parameter)
+
+            infos[post_response[3]] = [post_response[1]]
+
+            html = sub("<.*?>","",post_response[2])
+            teste_html = tester.crawler(html, args.v)
+            comparation = teste_html.compare(p_html_default)
+            if comparation == "not_equal":
+                teste_string = teste_html.strings(args.ignore)
+
+                if teste_string == "not_found":
+                    infos[post_response[3]].append(html)
+        else:
+            pass
+
+
+def test_GET(target_info, wlist):
+    """
+        [GET] Path test function
     """
     #target_info is a tuple and has
     # [0] = URL
@@ -293,9 +349,12 @@ if __name__ == "__main__":
             count_t += 1
             print(" [+] Starting Thread %i" % count_t)
 
-        #Must have comma after w_list, so it will not try to unpack the list
-        threading.Thread(target = test, args = (target, w_list,)).start()
-        #Waits 1 second before starting another thread
+        if args.p:
+            threading.Thread(target = test_POST, args = (target, w_list,)).start()
+        else:
+            #Must have comma after w_list, so it will not try to unpack the list
+            threading.Thread(target = test_GET, args = (target, w_list,)).start()
+            #Waits 1 second before starting another thread
         sleep(1)
     
     #Loop
@@ -316,7 +375,7 @@ if __name__ == "__main__":
             if len(infos) != 0:
                 #Call module to print all results.
                 #target[1][1] = default page size
-                rst = results.show(infos, target[1][1])
+                rst = results.show(infos, target[1][1], args.p)
                 #Retrive Average Page Size
                 avg = rst.AverageSize()
                 #Print All Results Information
