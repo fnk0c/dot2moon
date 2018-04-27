@@ -32,16 +32,21 @@ SOFTWARE.
 """
 
 class show(object):
-    def __init__(self, infos, default_size):
+    def __init__(self, infos, default_size, post):
         self.infos = infos
         self.default_size = default_size
+        self.post = post
 
     #Get the average size of all pages using arithmetical mean
     def AverageSize(self):
         _sizes = []
-
-        for s in self.infos:
-            _sizes.append(self.infos[s][1])
+        
+        if self.post != None:
+            for s in self.infos:
+                _sizes.append(self.infos[s][0])
+        else:
+            for s in self.infos:
+                _sizes.append(self.infos[s][1])
         try:
             avg = round(sum(_sizes)/len(_sizes), 0)
         except TypeError:
@@ -52,38 +57,22 @@ class show(object):
 
     #Show details of all pages scanned/found (only code 200)
     def detail(self, average, characters):
-        #Print infos to terminal
-        for l in self.infos:
-            print("URL: %s" % l)
-            print("HTTP code: %s" % self.infos[l][0])
-            
-            if l == self.infos[l][2]:
-                pass
-            else:
-                print("Redirected to: %s" % self.infos[l][2])
+        if self.post != None:
+            for l in self.infos:
+                print("Payload: %s" % l)
+                print("Average Size: %s bytes" % average) 
+                print("Default Size: %s bytes" % self.default_size)
+                print("Size: %s bytes" % self.infos[l][0])
+                try:
+                    print("HTML:\n%s" % self.infos[l][1][:characters])
+                except IndexError:
+                    pass
+                print(Fore.YELLOW)
+                print("-"*80)
+                print(Fore.RESET)
 
-            print("Average Size: %s bytes" % average) 
-            print("Default Size: %s bytes" % self.default_size)
-            print("Size: %s bytes" % self.infos[l][1])
-            try:
-                print("HTML:\n%s" % self.infos[l][5][:characters])
-            except IndexError:
-                pass
-            print(Fore.YELLOW)
-            print("-"*80)
-            print(Fore.RESET)
-
-    #Funtion that will only show the potential results
-    def potential(self, average, characters, default_html):
-        default_html = default_html.splitlines()
-
-        print(Fore.GREEN)
-        print("-"*80)
-        print("----POTENTIAL-RESULTS" + ("-" * 59))
-        print("-"*80)
-        print(Fore.RESET)
-        for l in self.infos:
-            if len(self.infos[l]) == 5:
+        else:
+            for l in self.infos:
                 print("URL: %s" % l)
                 print("HTTP code: %s" % self.infos[l][0])
             
@@ -96,8 +85,31 @@ class show(object):
                 print("Default Size: %s bytes" % self.default_size)
                 print("Size: %s bytes" % self.infos[l][1])
                 try:
+                    print("HTML:\n%s" % self.infos[l][5][:characters])
+                except IndexError:
+                    pass
+                print(Fore.YELLOW)
+                print("-"*80)
+                print(Fore.RESET)
+
+    #Funtion that will only show the potential results
+    def potential(self, average, characters, default_html):
+        default_html = default_html.splitlines()
+
+        print(Fore.GREEN)
+        print("-"*80)
+        print("----POTENTIAL-RESULTS" + ("-" * 59))
+        print("-"*80)
+        print(Fore.RESET)
+        if self.post != None:
+            for l in self.infos:
+                print("Payload: %s" % l)
+                print("Average Size: %s bytes" % average) 
+                print("Default Size: %s bytes" % self.default_size)
+                print("Size: %s bytes" % self.infos[l][0])
+                try:
                     print(Fore.CYAN)
-                    target_html = self.infos[l][4].splitlines()
+                    target_html = self.infos[l][1].splitlines()
                     diff = unified_diff(
                             default_html, target_html, lineterm="\n")
 
@@ -105,14 +117,39 @@ class show(object):
                         if content[0] == "+":
                             print(content[1:])
 
-                    #print("HTML:\n%s" % self.infos[l][4][:characters])
-                    
                     print(Fore.RESET)
                 except IndexError:
                     pass
-                print(Fore.YELLOW)
-                print("-"*80)
-                print(Fore.RESET)
+        else:
+            for l in self.infos:
+                if len(self.infos[l]) == 5:
+                    print("URL: %s" % l)
+                    print("HTTP code: %s" % self.infos[l][0])
+            
+                    if l == self.infos[l][2]:
+                        pass
+                    else:
+                        print("Redirected to: %s" % self.infos[l][2])
+
+                    print("Average Size: %s bytes" % average) 
+                    print("Default Size: %s bytes" % self.default_size)
+                    print("Size: %s bytes" % self.infos[l][1])
+                    try:
+                        print(Fore.CYAN)
+                        target_html = self.infos[l][4].splitlines()
+                        diff = unified_diff(
+                                default_html, target_html, lineterm="\n")
+
+                        for content in diff:
+                            if content[0] == "+":
+                                print(content[1:])
+
+                        print(Fore.RESET)
+                    except IndexError:
+                        pass
+                    print(Fore.YELLOW)
+                    print("-"*80)
+                    print(Fore.RESET)
 
     def output(self, file_name, average):
         with open(file_name, "w") as f:

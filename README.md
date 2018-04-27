@@ -1,5 +1,5 @@
 # Dot2Moon
-Tool that checks for path traversal traces in a given web application url, plus it is capable of multi-threading, set timeout and 5-layers verification.
+Tool that checks for path traversal traces in a given web application url using GET and POST methods, plus it is capable of multi-threading, set timeout and 5-layers verification.
 
 ## What are the 5-layers?
 
@@ -17,6 +17,13 @@ If strings like: "Not Found, "Not be found" and others are found, then it is dis
 
 **5. Verify page size**  
 Similar to verification 2, but this time it uses the response size as criteria
+
+#### On POST method, it only uses 2 Layers:   
+**1. Verify response content**  
+At the start, the program obtain a "default" error response from the website. At this step, it will compare the default error page to the actual payload response  
+
+**2. Verify specific strings**  
+If strings like: "Not Found, "Not be found" and others are found, then it is discarted
 
 If the request go through all this testing layers, then it will be labed as "Potential". All resquests that return 200 will be added to a second list, so the user can verify it by himself is wish
 
@@ -39,27 +46,26 @@ Download and install [Python 3.x](https://www.python.org/downloads/windows/) and
 ## Running
 `python dot2moon.py --help`  
 ```
-usage: dot2moon.py [-h] -u U -w W [-v] [-t T] [-o O] [-c C]
+usage: dot2moon.py [-h] -u U -w W [-v] [-t T] [-p P] [-o O] [-c C]
                    [--user-agent USERAGENT] [--ignore IGNORE]
                    [--timeout TIMEOUT] [--random-agent] [--timeset TIMESET]
 
 Path Traversal tester and validator
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -u U                  Target site
-  -w W                  Wordlist used to test
-  -v                    Verbose, details every step
-  -t T                  Number of threads that will be executed (default = 4)
-  -o O                  Save results to file
-  -c C                  Define how many characters of HTML will be shown
-  --user-agent USERAGENT
-                        Change requests User-Agent
-  --ignore IGNORE       Look for specific string in HTML. If found, discart
-                        page
-  --timeout TIMEOUT     Set timeout
-  --random-agent        Set random user agent
-  --timeset TIMESET     Set time between requests
+  -h, --help                                  show this help message and exit
+  -u U                                           Target site
+  -w W                                         Wordlist used to test
+  -v                                               Verbose, details every step
+  -t T                                             Number of threads that will be executed (default = 4)
+  -p P                                            POST explotation. Inform parameter
+  -o O                                           Save results to file
+  -c C                                            Define how many characters of HTML will be shown
+  --user-agent USERAGENT     Change requests User-Agent
+  --ignore IGNORE                     Look for specific string in HTML. If found, discart page
+  --timeout TIMEOUT                 Set timeout
+  --random-agent                     Set random user agent
+  --timeset TIMESET                  Set time between requests
 ```
 ## Exemples
 * Basic Usage  
@@ -80,6 +86,10 @@ optional arguments:
 
 * Specify User Agent  
 `python dot2moon.py -u website.com/catalog.php?src= -w wordlists/wl.txt --user-agent 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36'`  
+
+* POST Injection Method  
+`python dot2moon.py -u website.com/catalog/?page=text-file-viewer.php -p 'textfile=PAYLOAD&text-file-viewer-php-submit-button=ViewFile'  -w wordlists/wl.txt`  
+***Note: Injection point must be replaced with "PAYLOAD" in order to identify where the payloads shaw be injected***
 
 ## License
 check [License](https://github.com/PsiqueLabs/dot2moon/blob/master/LICENSE) for more details.  

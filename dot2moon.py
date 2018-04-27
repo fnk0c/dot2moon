@@ -63,6 +63,9 @@ parser.add_argument(
         default = 4,
         help = "Number of threads that will be executed (default = 4)")
 parser.add_argument(
+        "-p",
+        help = "POST explotation. Inform parameter")
+parser.add_argument(
         "-o", 
         help = "Save results to file")
 parser.add_argument(
@@ -106,7 +109,7 @@ def check():
     	args.u, args.v, args.UserAgent, args.timeout)
 
     #Validates input URL
-    par = conn.url()
+    conn.url()
     
     #Returns url and HTTP code
     code = conn.HTTPcode(True)
@@ -122,8 +125,8 @@ def check():
         if follow == "n":
             exit()
         else:
-            #returns URL, default page size, default html, parameter status
-            return(args.u, 0, "not found", par)
+            #returns URL, default page size, default html
+            return(args.u, 0, "not found")
    
     #Get default failed injection page size
     #Returns URL and Default page size
@@ -136,8 +139,12 @@ def check():
     #Check for redirect (True)
     target_url = conn.redirect(True, True)
 
-    #Returns URL, (URL, default page size), default_html, parameter status
-    return(target_url, default_p_size, default_html, par)
+    #Returns URL, (URL, default page size), default_html
+    if args.p != None:
+        par = conn.parameter(args.p)
+        return(target_url, default_p_size, default_html, par)
+    else:
+        return(target_url, default_p_size, default_html)
 
 def wordlist():
     """
@@ -147,19 +154,69 @@ def wordlist():
         wl = wl.readlines()
     return(wl)
 
-def test(target_info, wlist):
+def test_POST(target_info, wlist):
     """
-        Path test function
+        [POST] Path test function
     """
     #target_info is a tuple and has
     # [0] = URL
     # [1] = default page size
     # [2] = default HTML page
-    # [3] = parameter status (False or True)
+    # [3] = injection parameter
     target = target_info[0]
     p_size_default = target_info[1]
     p_html_default = target_info[2]
     parameter = target_info[3]
+
+    #Will go through all the lines in the wordlist
+    for directory in wlist:
+        directory = directory.rstrip()
+        
+        if directory not in scanned:
+            scanned.append(directory)
+            #If --timeset in use. The program will wait before next request
+            if args.timeset != None:
+                if args.v == True:
+                    print("sleeping %s seconds" % args.timeset)
+                sleep(args.timeset)
+            
+            for p in parameter:
+                #First run has "PAYLOAD" as value
+                if parameter[p] == "PAYLOAD":
+                    parameter[p] = directory
+                #After the first, it adquires the injection payload value
+                elif "/" in parameter[p]:
+                    parameter[p] = directory
+
+            conn = connection.verify(
+                    target, args.v, args.UserAgent, args.timeout)
+            post_response = conn.post(directory, parameter)
+
+            infos[post_response[3]] = [post_response[1]]
+
+            html = sub("<.*?>","",post_response[2])
+            teste_html = tester.crawler(html, args.v)
+            comparation = teste_html.compare(p_html_default)
+            if comparation == "not_equal":
+                teste_string = teste_html.strings(args.ignore)
+
+                if teste_string == "not_found":
+                    infos[post_response[3]].append(html)
+        else:
+            pass
+
+
+def test_GET(target_info, wlist):
+    """
+        [GET] Path test function
+    """
+    #target_info is a tuple and has
+    # [0] = URL
+    # [1] = default page size
+    # [2] = default HTML page
+    target = target_info[0]
+    p_size_default = target_info[1]
+    p_html_default = target_info[2]
 
     #Will go through all the lines in the wordlist
     for directory in wlist:
@@ -176,46 +233,29 @@ def test(target_info, wlist):
             
             #Here the final URL will be treated. This way we can assure the
             #Right URL and payload will be passed
-            #If URL has a parameter, it must be different of the one without it
-            if parameter == True:
-                #Check if target URL finishs with "/"
-                # site.com/index.php?file=     ../etc/passwd
-                if directory[0] != "/":
-                    if target[-1] != "/":
-                        #Final target becomes
-                        #site.com/index.php?file=../etc/passwd
-                        final_target = target + directory
-                    #If site.com/index.php?file=/  ../etc/passwd
-                    else:
-                        #Final target becomes
-                        #site.com/index.php?file=../etc/passwd
-                        final_target = target[:-1] + directory
-                # site.com/index.php?file=     /../etc/passwd
+            #Check if target URL finishs with "/"
+            # site.com/index.php?file=     ../etc/passwd
+            if directory[0] != "/":
+                if target[-1] != "/":
+                    #Final target becomes
+                    #site.com/index.php?file=../etc/passwd
+                    final_target = target + directory
+                #If site.com/index.php?file=/  ../etc/passwd
                 else:
                     #Final target becomes
                     #site.com/index.php?file=../etc/passwd
-                    final_target = target + directory[1:]
-            #If it has no parameter
+                    final_target = target[:-1] + directory
+            # site.com/index.php?file=     /../etc/passwd
             else:
-                #Check if directory ends with "/"
-                #site.com/dir/  /../etc/passwd
-                if directory[0] != "/":
-                    #This site.com/dir  ../etc/passwd
-                    if target[-1] != "/":
-                        #becames site.com/dir/../etc/passwd
-                        final_target = target + "/" + directory
-                    else:
-                        final_target = target + directory
-                else:
-                    if target[-1] == "/":
-                        final_target = target[:-1] + directory
-
+                #Final target becomes
+                #site.com/index.php?file=../etc/passwd
+                final_target = target + directory[1:]
 
             if args.RandomAgent == True:
                 args.UserAgent = useragents.generate()
 
-            conn = connection.verify(final_target, args.v, args.UserAgent,\
-                    args.timeout)
+            conn = connection.verify(
+                    final_target, args.v, args.UserAgent, args.timeout)
             #Checks for HTTP code of URL + payload. False to "check"
             #Response_code returns (URL tested, HTTP code)
             response_code = conn.HTTPcode(False)
@@ -294,7 +334,7 @@ if __name__ == "__main__":
     print(" [+] Timeout set of %.2f seconds" % args.timeout)
     
     #Calls Check function in order to check requirements
-    #Target now returns URL, default page size, default html, parameter status
+    #Target now returns URL, default page size, default html
     target = check()
     
     #Calls function to retrieve wordlist
@@ -309,9 +349,12 @@ if __name__ == "__main__":
             count_t += 1
             print(" [+] Starting Thread %i" % count_t)
 
-        #Must have comma after w_list, so it will not try to unpack the list
-        threading.Thread(target = test, args = (target, w_list,)).start()
-        #Waits 1 second before starting another thread
+        if args.p:
+            threading.Thread(target = test_POST, args = (target, w_list,)).start()
+        else:
+            #Must have comma after w_list, so it will not try to unpack the list
+            threading.Thread(target = test_GET, args = (target, w_list,)).start()
+            #Waits 1 second before starting another thread
         sleep(1)
     
     #Loop
@@ -332,7 +375,7 @@ if __name__ == "__main__":
             if len(infos) != 0:
                 #Call module to print all results.
                 #target[1][1] = default page size
-                rst = results.show(infos, target[1][1])
+                rst = results.show(infos, target[1][1], args.p)
                 #Retrive Average Page Size
                 avg = rst.AverageSize()
                 #Print All Results Information
