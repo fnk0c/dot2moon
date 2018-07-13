@@ -91,5 +91,21 @@ optional arguments:
 `python dot2moon.py -u website.com/catalog/?page=text-file-viewer.php -p 'textfile=PAYLOAD&text-file-viewer-php-submit-button=ViewFile'  -w wordlists/wl.txt`  
 ***Note: Injection point must be replaced with "PAYLOAD" in order to identify where the payloads shaw be injected***
 
+## Screenshots
+
+#### Help
+![print](https://imgur.com/3IMpC55.png)
+
+#### POST
+![print](https://imgur.com/CBE18n6.png)
+
+#### GET
+![print](https://imgur.com/YbATAre.png)
+
+#### Results
+![print](https://i.imgur.com/4Z9NbaP.png)
+
+![print](https://imgur.com/qbKuohh.png)
+
 ## License
 check [License](https://github.com/PsiqueLabs/dot2moon/blob/master/LICENSE) for more details.  
