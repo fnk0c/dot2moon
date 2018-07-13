@@ -95,12 +95,16 @@ optional arguments:
 
 * Help
 ![print](https://imgur.com/3IMpC55.png)
+
 * POST
 ![print](https://imgur.com/CBE18n6.png)
+
 * GET
 ![print](https://imgur.com/YbATAre.png)
+
 * Results
 ![print](https://imgur.com/3IMpC55.png)
+
 ![print](https://imgur.com/qbKuohh.png)
 
 ## License
