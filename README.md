@@ -93,16 +93,16 @@ optional arguments:
 
 ## Screenshots
 
-* Help
+#### Help
 ![print](https://imgur.com/3IMpC55.png)
 
-* POST
+#### POST
 ![print](https://imgur.com/CBE18n6.png)
 
-* GET
+#### GET
 ![print](https://imgur.com/YbATAre.png)
 
-* Results
+#### Results
 ![print](https://imgur.com/3IMpC55.png)
 
 ![print](https://imgur.com/qbKuohh.png)
