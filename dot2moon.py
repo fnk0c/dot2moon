@@ -29,18 +29,18 @@ SOFTWARE.
 """
 
 from threading import Thread, active_count
-from sys import path, argv
+from src import useragents
+from src import connection
 from colorama import Fore
+from src import results
 from time import sleep
+from src import banner
+from src import tester
+from sys import argv
 from re import sub
-path.append("src")
-import useragents
-import connection
+
 import threading
 import argparse
-import results
-import banner
-import tester
 
 parser = argparse.ArgumentParser(
         description = "Path Traversal tester and validator",
